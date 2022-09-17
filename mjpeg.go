@@ -89,6 +89,17 @@ func (s *Stream) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// UpdateJPEG will set the current frame to the provided JPEG bytes and stream those bytes
+func (s *Stream) UpdateJPEG(buf []byte) error {
+	s.lock.Lock()
+	defer s.lock.Unlock()
+
+	s.buf.Reset()
+	s.buf.Write(buf)
+	*s.frame = *s.frame + 1
+	return nil
+}
+
 // Update will set the current frame to the provided Image. This will preform
 // a JPEG encoding, and stream those bytes -- this image handle will not be
 // held by the Stream after this call.
